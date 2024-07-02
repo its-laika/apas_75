@@ -1,10 +1,12 @@
 use std::{fs::File, io::Read};
 
-use document::ConfigDocument;
+use document::Config;
 use files::{build_full_path, get_file_names_of_directory, DIRECTORY_SEPARATOR};
 
 mod document;
 mod files;
+mod random;
+mod string;
 
 const STARSHIP_CONFIG_DIR: &str = "~/.config/";
 const STARSHIP_FILE_NAME: &str = "starship.toml";
@@ -21,9 +23,8 @@ fn main() {
         }
     };
 
-    let theme_path = match get_random_theme_path(&config_dir_path) {
-        Some(p) => p,
-        None => return,
+    let Some(theme_path) = get_random_theme_path(&config_dir_path) else {
+        return;
     };
 
     let starship_config_path = format!(
@@ -59,37 +60,35 @@ fn main() {
         return;
     }
 
-    let mut config_document = match ConfigDocument::new(&starship_config) {
+    let mut config_document = match Config::new(&starship_config) {
         Ok(c) => c,
         Err(e) => {
-            eprintln!("Could not parse Starship config file: {:?}", e);
+            eprintln!("Could not parse Starship config file: {e:?}");
             return;
         }
     };
 
     config_document.set_theme(&theme_config);
 
-    println!("{}", config_document);
+    println!("{config_document}");
 }
 
 fn get_random_theme_path(config_dir_path: &str) -> Option<String> {
-    let file_names = match get_file_names_of_directory(config_dir_path) {
-        Ok(f) => f,
-        Err(_) => return None,
-    };
-
+    let file_names = get_file_names_of_directory(config_dir_path).ok()?;
     let theme_file_names = file_names
         .iter()
         .filter(|f| f.starts_with(PREFIX_THEMES_TOML))
-        .filter(|f| f.ends_with(SUFFIX_THEMES_TOML));
+        .filter(|f| f.ends_with(SUFFIX_THEMES_TOML))
+        .collect::<Vec<&String>>();
 
-    if let Some(file_name) = theme_file_names.into_iter().next() {
-        // TODO: Pick random
-        return Some(format!(
-            "{}{}{}",
-            config_dir_path, DIRECTORY_SEPARATOR, file_name
-        ));
+    if theme_file_names.is_empty() {
+        return None;
     }
 
-    None
+    let random_index = random::get_fake(0, u32::try_from(theme_file_names.len()).ok()?)?;
+    let random_file_name = theme_file_names[random_index as usize];
+
+    Some(format!(
+        "{config_dir_path}{DIRECTORY_SEPARATOR}{random_file_name}"
+    ))
 }
