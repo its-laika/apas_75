@@ -4,4 +4,3 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-toml_edit = "0.22.14"
