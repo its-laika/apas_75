@@ -1,12 +1,13 @@
 use std::{env, fs::read_dir, io::Error, path::absolute};
 
+pub const DIRECTORY_SEPARATOR: char = '/';
 const ENV_VAR_USER_HOME: &str = "HOME";
 const SYMBOL_USER_HOME: char = '~';
 
-pub fn get_files_of_directory(path: &str) -> Result<Vec<String>, Error> {
+pub fn get_file_names_of_directory(path: &str) -> Result<Vec<String>, Error> {
     let directory = read_dir(path)?;
 
-    let mut file_paths = Vec::new();
+    let mut file_names = Vec::new();
     for dir_entry_result in directory {
         let dir_entry = match dir_entry_result {
             Ok(d) => d,
@@ -22,16 +23,13 @@ pub fn get_files_of_directory(path: &str) -> Result<Vec<String>, Error> {
             continue;
         }
 
-        let dir_entry_path = dir_entry.path();
-        let file_path = match dir_entry_path.to_str() {
-            Some(p) => p,
-            None => continue,
-        };
-
-        file_paths.push(String::from(file_path));
+        let file_name = dir_entry.file_name();
+        if let Some(p) = file_name.to_str() {
+            file_names.push(String::from(p));
+        }
     }
 
-    Ok(file_paths)
+    Ok(file_names)
 }
 
 pub fn build_full_path(path: &str) -> Result<String, Error> {
@@ -45,7 +43,7 @@ pub fn build_full_path(path: &str) -> Result<String, Error> {
             )
         })?;
 
-        format!("{}/{}", home_dir, &path[1..])
+        format!("{}{}{}", home_dir, DIRECTORY_SEPARATOR, &path[1..])
     };
 
     return absolute(home_replaced_path).and_then(|path_buf| {
