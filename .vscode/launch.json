@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'saas-soos'",
+            "name": "Debug executable 'apas_75'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=saas-soos",
-                    "--package=saas-soos"
+                    "--bin=apas_75",
+                    "--package=apas_75"
                 ],
                 "filter": {
-                    "name": "saas-soos",
+                    "name": "apas_75",
                     "kind": "bin"
                 }
             },
@@ -25,16 +25,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'saas-soos'",
+            "name": "Debug unit tests in executable 'apas_75'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=saas-soos",
-                    "--package=saas-soos"
+                    "--bin=apas_75",
+                    "--package=apas_75"
                 ],
                 "filter": {
-                    "name": "saas-soos",
+                    "name": "apas_75",
                     "kind": "bin"
                 }
             },
