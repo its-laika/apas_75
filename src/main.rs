@@ -1,4 +1,7 @@
-use std::{fs::File, io::Read};
+use std::{
+    fs::{File, OpenOptions},
+    io::{Read, Write},
+};
 
 use document::Config;
 use files::{build_full_path, get_file_names_of_directory, DIRECTORY_SEPARATOR};
@@ -45,18 +48,20 @@ fn main() {
         return;
     }
 
-    let mut starship_config_file = match File::open(&starship_config_path) {
-        Ok(f) => f,
-        Err(e) => {
-            eprint!("Could not open Starship config file {starship_config_path}: {e}");
+    let mut starship_config = String::new();
+    {
+        let mut starship_config_file = match File::open(&starship_config_path) {
+            Ok(f) => f,
+            Err(e) => {
+                eprint!("Could not open Starship config file {starship_config_path}: {e}");
+                return;
+            }
+        };
+
+        if let Err(e) = starship_config_file.read_to_string(&mut starship_config) {
+            eprint!("Could not read Starship config file: {e}");
             return;
         }
-    };
-
-    let mut starship_config = String::new();
-    if let Err(e) = starship_config_file.read_to_string(&mut starship_config) {
-        eprint!("Could not read Starship config file: {e}");
-        return;
     }
 
     let mut config_document = match Config::new_with_defaults(&starship_config) {
@@ -69,7 +74,23 @@ fn main() {
 
     config_document.set_theme(&theme_config);
 
-    println!("{config_document}");
+    let starship_config_file = OpenOptions::new()
+        .truncate(true)
+        .write(true)
+        .create(false)
+        .open(&starship_config_path);
+
+    let write_result = match starship_config_file {
+        Ok(mut f) => f.write_all(config_document.to_string().as_bytes()),
+        Err(e) => {
+            eprintln!("Could not open Starship config file {starship_config_path} to write: {e}");
+            return;
+        }
+    };
+
+    if let Err(e) = write_result {
+        eprintln!("Could not write new config to Starship config file {starship_config_path}: {e}");
+    }
 }
 
 fn get_random_theme_path(config_dir_path: &str) -> Option<String> {
