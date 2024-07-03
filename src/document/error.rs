@@ -5,6 +5,8 @@ use std::fmt::{Debug, Formatter, Result};
 pub enum ConfigError {
     /// Indicates that a theme part cannot be unambiguously found
     MissingThemeIndicator,
+    /// Indicates that theme indicators have the wrong order
+    ThemeIndicatorsWrongOrder,
 }
 
 impl Debug for ConfigError {
@@ -12,6 +14,9 @@ impl Debug for ConfigError {
         match self {
             Self::MissingThemeIndicator => {
                 write!(f, "Not exactly one start and one end theme indicator given")
+            }
+            Self::ThemeIndicatorsWrongOrder => {
+                write!(f, "Theme indicators not in the correct order (start > end)")
             }
         }
     }

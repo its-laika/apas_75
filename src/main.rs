@@ -1,12 +1,11 @@
 use std::{fs::File, io::Read};
 
-use document::Config;
+use document::{Config, DEFAULT_INDICATOR_THEME_END, DEFAULT_INDICATOR_THEME_START};
 use files::{build_full_path, get_file_names_of_directory, DIRECTORY_SEPARATOR};
 
 mod document;
 mod files;
 mod random;
-mod string;
 
 const STARSHIP_CONFIG_DIR: &str = "~/.config/";
 const STARSHIP_FILE_NAME: &str = "starship.toml";
@@ -60,7 +59,11 @@ fn main() {
         return;
     }
 
-    let mut config_document = match Config::new(&starship_config) {
+    let mut config_document = match Config::new(
+        &starship_config,
+        DEFAULT_INDICATOR_THEME_START,
+        DEFAULT_INDICATOR_THEME_END,
+    ) {
         Ok(c) => c,
         Err(e) => {
             eprintln!("Could not parse Starship config file: {e:?}");
