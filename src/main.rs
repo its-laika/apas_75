@@ -1,6 +1,6 @@
 use std::{fs::File, io::Read};
 
-use document::{Config, DEFAULT_INDICATOR_THEME_END, DEFAULT_INDICATOR_THEME_START};
+use document::Config;
 use files::{build_full_path, get_file_names_of_directory, DIRECTORY_SEPARATOR};
 
 mod document;
@@ -59,11 +59,7 @@ fn main() {
         return;
     }
 
-    let mut config_document = match Config::new(
-        &starship_config,
-        DEFAULT_INDICATOR_THEME_START,
-        DEFAULT_INDICATOR_THEME_END,
-    ) {
+    let mut config_document = match Config::new_with_defaults(&starship_config) {
         Ok(c) => c,
         Err(e) => {
             eprintln!("Could not parse Starship config file: {e:?}");
