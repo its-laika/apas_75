@@ -1,5 +1,6 @@
 use std::fmt::{Display, Formatter, Result};
 
+/// Includes errors that can happen during replacement of the custom theme
 #[allow(clippy::module_name_repetitions)]
 pub enum ReplacementError {
     NotReadable(String),

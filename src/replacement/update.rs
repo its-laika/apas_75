@@ -11,12 +11,25 @@ use super::error::ReplacementError;
 
 const FILE_EXTENSION_TOML: &str = ".toml";
 
+/// Replaces custom theme (in `config_directory_path` with given prefix `theme_file_name_prefix`) of a
+/// Starship config (by given `starship_config_path`) by overriding the custom theme part.
+///
+/// # Arguments
+///
+/// * `starship_config_path` - Path of Starship configuration file
+/// * `config_directory_path` - Path of directory that includes the theme files
+/// * `theme_file_name_prefix` - File name prefix that indicates that a file is a valid theme file
+///
+/// # Returns
+///
+/// `Ok(())` if everything went fine or `Err(ReplacementError)` if an error ocurred.
 pub fn replace_custom_theme(
     starship_config_path: &str,
     config_directory_path: &str,
-    theme_file_prefix: &str,
+    theme_file_name_prefix: &str,
 ) -> Result<(), ReplacementError> {
-    let Some(theme_path) = get_random_theme_path(config_directory_path, theme_file_prefix) else {
+    let Some(theme_path) = get_random_theme_path(config_directory_path, theme_file_name_prefix)
+    else {
         return Ok(());
     };
 
@@ -77,11 +90,25 @@ pub fn replace_custom_theme(
     Ok(())
 }
 
-fn get_random_theme_path(config_dir_path: &str, theme_file_prefix: &str) -> Option<String> {
-    let file_names = get_file_names_of_directory(config_dir_path).ok()?;
+/// Returns path of a random TOML theme file in given `config_directory_path` that has given
+/// `theme_file_prefix`.
+///
+/// # Arguments
+///
+/// * `config_directory_path` - Path of directory that includes the theme files
+/// * `theme_file_name_prefix` - File name prefix that indicates that a file is a valid theme file
+///
+/// # Returns
+///
+/// File path of a random valid theme file
+fn get_random_theme_path(
+    config_directory_path: &str,
+    theme_file_name_prefix: &str,
+) -> Option<String> {
+    let file_names = get_file_names_of_directory(config_directory_path).ok()?;
     let theme_file_names = file_names
         .iter()
-        .filter(|f| f.starts_with(theme_file_prefix))
+        .filter(|f| f.starts_with(theme_file_name_prefix))
         .filter(|f| f.ends_with(FILE_EXTENSION_TOML))
         .collect::<Vec<&String>>();
 
@@ -93,6 +120,6 @@ fn get_random_theme_path(config_dir_path: &str, theme_file_prefix: &str) -> Opti
     let random_file_name = theme_file_names[random_index as usize];
 
     Some(format!(
-        "{config_dir_path}{DIRECTORY_SEPARATOR}{random_file_name}"
+        "{config_directory_path}{DIRECTORY_SEPARATOR}{random_file_name}"
     ))
 }

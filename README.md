@@ -8,11 +8,26 @@ extend the main configuration.
 Similar the config `ZSH_THEME="random"` of [_Oh My Zsh_](https://ohmyz.sh/).
 
 ## Status
-Just started, nothing's working.  
+Basic functionality should work. This is the bare minimum.
+Still working on making this program really useable.
+
 For concrete TODOs, see [TODO.md](TODO.md).
 
-## API
-Not defined yet, see [Status](#status).
+## Usage
+**Hint:** Starship configuration needs to be located at `~/.config/starship.toml`.
+
+1. Edit your Starship configuration file. Insert the following indicators at where the custom
+   config should be inserted:
+   ```toml
+   ### apas_75 theme start ###
+   ### apas_75 theme end ###
+   ```
+2. Create custom theme file(s) in `~/.config/` with file names matching `starship-theme-[THEME NAME].toml`.
+   Each time _apas\_75_ is called, one of the theme files will be inserted where the indicators of
+   step 1 have been set.
+3. Run _apas\_75_.
+4. If you want to update the Starship config after every command, add _apas\_75_ as a precommand function.
+   This differs for each shell. (**TODO: Add examples!**)
 
 ## What does _APAS-75_ mean?
 The [APAS-75](https://en.wikipedia.org/wiki/Androgynous_Peripheral_Attach_System#APAS-75)

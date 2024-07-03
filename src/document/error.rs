@@ -1,7 +1,7 @@
 use std::fmt::{Debug, Formatter, Result};
 
-#[allow(clippy::module_name_repetitions)]
 /// Contains all `Error` cases that the `Config` uses
+#[allow(clippy::module_name_repetitions)]
 pub enum ConfigError {
     /// Indicates that a theme part cannot be unambiguously found
     MissingThemeIndicator,
