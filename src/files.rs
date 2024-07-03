@@ -1,4 +1,8 @@
-use std::{env, fs::read_dir, io::Error, path::absolute};
+use std::{
+    env,
+    fs::{canonicalize, read_dir},
+    io::Error,
+};
 
 pub const DIRECTORY_SEPARATOR: char = '/';
 const ENV_VAR_USER_HOME: &str = "HOME";
@@ -45,12 +49,12 @@ pub fn get_file_names_of_directory(path: &str) -> Result<Vec<String>, Error> {
 ///
 /// Arguments
 ///
-/// * `path` - The path that should be normalized
+/// * `path` - The path that should be canonicalized
 ///
 /// Returns
 ///
-/// Full, normalized path, if possible. Returns `Err` if path cannot be
-/// normalized.
+/// Full, canonicalized path, if possible. Returns `Err` if path cannot be
+/// canonicalized.
 pub fn build_full_path(path: &str) -> Result<String, Error> {
     let home_replaced_path = if path.starts_with(SYMBOL_USER_HOME) {
         let home_dir = env::var(ENV_VAR_USER_HOME).map_err(|_| {
@@ -65,7 +69,7 @@ pub fn build_full_path(path: &str) -> Result<String, Error> {
         String::from(path)
     };
 
-    return absolute(home_replaced_path).and_then(|path_buf| {
+    return canonicalize(home_replaced_path).and_then(|path_buf| {
         path_buf.to_str().map(String::from).ok_or(Error::new(
             std::io::ErrorKind::InvalidData,
             "Could not build absolute path",
