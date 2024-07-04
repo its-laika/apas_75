@@ -92,6 +92,13 @@ impl Config {
         }
     }
 
+    /// # Returns
+    ///
+    /// Returns whether a theme (or at least the indicators) are set.
+    pub fn has_theme(&self) -> bool {
+        self.theme.is_some()
+    }
+
     /// Overrides `theme` part of `Config`
     ///
     /// # Arguments

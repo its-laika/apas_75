@@ -27,7 +27,14 @@ For concrete TODOs, see [TODO.md](TODO.md).
    step 1 have been set.
 3. Run _apas\_75_.
 4. If you want to update the Starship config after every command, add _apas\_75_ as a precommand function.
-   This differs for each shell. (**TODO: Add examples!**)
+   This differs for each shell.
+
+   e.g. _fish_:
+   ```fish
+   function call_apas_75 --on-event fish_preexec
+      # Call apas_75 executable here
+   end
+   ``` 
 
 ## What does _APAS-75_ mean?
 The [APAS-75](https://en.wikipedia.org/wiki/Androgynous_Peripheral_Attach_System#APAS-75)
@@ -35,6 +42,11 @@ is a spacecraft docking mechanism, developed by soviet and american engineers. I
 built to connect an Apollo and a Soyuz spacecraft during the _Apollo–Soyuz Test Project_.  
 By "adapting" multiple _Starship_ theme files, you could say that this project aims for
 something similar.
+
+## Testimonials
+
+> this could have been a 10 line bash script!  
+> _~ a co-worker_
 
 ## License
 This code is licensed under the MIT-License (see [LICENSE](LICENSE)).

@@ -28,20 +28,6 @@ pub fn replace_custom_theme(
     config_directory_path: &str,
     theme_file_name_prefix: &str,
 ) -> Result<(), ReplacementError> {
-    let Some(theme_path) = get_random_theme_path(config_directory_path, theme_file_name_prefix)
-    else {
-        return Ok(());
-    };
-
-    let Ok(mut theme_config_file) = File::open(&theme_path) else {
-        return Err(ReplacementError::NotReadable(theme_path));
-    };
-
-    let mut theme_config = String::new();
-    if theme_config_file.read_to_string(&mut theme_config).is_err() {
-        return Err(ReplacementError::NotReadable(theme_path));
-    }
-
     let mut starship_config = String::new();
     {
         let Ok(mut starship_config_file) = File::open(starship_config_path) else {
@@ -63,6 +49,25 @@ pub fn replace_custom_theme(
     let Ok(mut config_document) = Config::new_with_defaults(&starship_config) else {
         return Err(ReplacementError::InvalidConfig);
     };
+
+    if !config_document.has_theme() {
+        /* This could possibly break the configuration, therefore do nothing. */
+        return Ok(());
+    }
+
+    let Some(theme_path) = get_random_theme_path(config_directory_path, theme_file_name_prefix)
+    else {
+        return Ok(());
+    };
+
+    let Ok(mut theme_config_file) = File::open(&theme_path) else {
+        return Err(ReplacementError::NotReadable(theme_path));
+    };
+
+    let mut theme_config = String::new();
+    if theme_config_file.read_to_string(&mut theme_config).is_err() {
+        return Err(ReplacementError::NotReadable(theme_path));
+    }
 
     config_document.set_theme(&theme_config);
 
