@@ -58,5 +58,7 @@ pub fn build_canonicalized_path(path: &str) -> Result<PathBuf, Error> {
         String::from(path)
     };
 
-    Path::new(&home_replaced_path).canonicalize()
+    Path::new(&home_replaced_path)
+        .canonicalize()
+        .map_err(|e| Error::new(e.kind(), format!("{e} for path '{path}'")))
 }

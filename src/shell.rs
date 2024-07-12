@@ -23,12 +23,12 @@ impl Shell {
     ///
     /// # Expamples
     ///
-    /// ## On _zsh_:
+    /// ## On `zsh`:
     /// ```
     /// assert_eq!(Shell::get_current(), Some(Zsh));
     /// ```
     ///
-    /// ## On _PowerShell_:
+    /// ## On `PowerShell`:
     /// ```
     /// assert_eq!(Shell::get_current(), None);
     /// ```

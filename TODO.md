@@ -5,5 +5,5 @@
 - [ ] **Properly escape / validate arguments correctly before building the shell command**
 - [ ] Testing, testing, testing
 - [ ] Support more shells (at least bash)
-- [ ] Make theme path configurable
+- [x] Make theme path configurable
 - [ ] Module tests

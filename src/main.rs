@@ -1,4 +1,4 @@
-use std::{io::Error, path::PathBuf, process::ExitCode};
+use std::{env, io::Error, path::PathBuf, process::ExitCode};
 
 use file::{build_canonicalized_path, get_files_of_directory};
 use shell::{CommandBuilder, Shell, ENV_KEY_STARSHIP_CONFIG};
@@ -6,7 +6,7 @@ use shell::{CommandBuilder, Shell, ENV_KEY_STARSHIP_CONFIG};
 mod file;
 mod shell;
 
-const CONFIG_DIR: &str = "~/.config/apas_75/";
+const DEFAULT_CONFIG_DIR: &str = "~/.config/apas_75/";
 const FILE_EXTENSION_TOML: &str = "toml";
 
 fn main() -> ExitCode {
@@ -15,11 +15,10 @@ fn main() -> ExitCode {
         return ExitCode::FAILURE;
     };
 
-    // TODO: Config dir as an argument?
-    let configs_path = match build_canonicalized_path(CONFIG_DIR) {
+    let configs_path = match build_config_directory() {
         Ok(p) => p,
         Err(e) => {
-            eprintln!("Could not canonicalize path '{CONFIG_DIR}': {e}");
+            eprintln!("Could not canonicalize config path: {e}");
             return ExitCode::FAILURE;
         }
     };
@@ -99,4 +98,13 @@ fn get_next_theme_file_name(
         Some(&s) => Ok(s.clone()),
         None => Ok(first),
     }
+}
+
+fn build_config_directory() -> Result<PathBuf, Error> {
+    let path = match env::args().nth(1) {
+        Some(p) => p,
+        None => DEFAULT_CONFIG_DIR.to_string(),
+    };
+
+    build_canonicalized_path(&path)
 }
