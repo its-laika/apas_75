@@ -2,9 +2,11 @@ use std::{env, io::Error, path::PathBuf, process::ExitCode};
 
 use file::{build_canonicalized_path, get_files_of_directory};
 use shell::{CommandBuilder, Shell, ENV_KEY_STARSHIP_CONFIG};
+use starship::get_next_theme_file_name;
 
 mod file;
 mod shell;
+mod starship;
 
 const DEFAULT_CONFIG_DIR: &str = "~/.config/apas_75/";
 const FILE_EXTENSION_TOML: &str = "toml";
@@ -60,46 +62,21 @@ fn main() -> ExitCode {
     ExitCode::SUCCESS
 }
 
-fn get_next_theme_file_name(
-    files: &[PathBuf],
-    env_config_path: Option<String>,
-) -> Result<PathBuf, Error> {
-    let mut theme_files = files
-        .iter()
-        .filter(|f| f.extension().is_some_and(|e| e == FILE_EXTENSION_TOML))
-        .collect::<Vec<&PathBuf>>();
-
-    theme_files.sort();
-
-    let first = match theme_files.first() {
-        Some(&f) => f.clone(),
-        None => {
-            return Err(Error::new(
-                std::io::ErrorKind::NotFound,
-                "No theme files available",
-            ))
-        }
-    };
-
-    if files.len() == 1 {
-        return Ok(first);
-    }
-
-    let Some(current_path) = env_config_path else {
-        return Ok(first);
-    };
-
-    let next = theme_files.iter().find(|&f| match f.to_str() {
-        Some(s) => s > &current_path,
-        None => false,
-    });
-
-    match next {
-        Some(&s) => Ok(s.clone()),
-        None => Ok(first),
-    }
-}
-
+/// Determines and builds `apas_75` config directory.
+///
+/// Checks for given command line argument or falls back to default path
+/// and returns canonicalized path or `Err` on error.
+///
+/// # Examples
+///
+/// ```rust
+/// let Ok(dir) = build_config_directory() or else {
+///     println!("Could not build config directory");
+///     return;
+/// }
+///
+/// println!("Using config directory: {:?}", dir);
+/// ```
 fn build_config_directory() -> Result<PathBuf, Error> {
     let path = match env::args().nth(1) {
         Some(p) => p,

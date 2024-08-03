@@ -5,6 +5,8 @@ use std::{
 
 use crate::shell::Shell;
 
+/// Default directory separator (may not work on Windows, this is not a
+/// priority though).
 pub const DIRECTORY_SEPARATOR: char = '/';
 
 const ENV_VAR_USER_HOME: &str = "HOME";

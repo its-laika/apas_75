@@ -196,4 +196,31 @@ mod tests {
         assert!(Shell::Zsh.build_env_command("365_PARTY", "GIRL").is_err());
         assert!(Shell::Zsh.build_env_command("CLUB", "'CLASSICS'").is_err());
     }
+
+    #[test]
+    fn test_get_current_works() {
+        env::set_var("STARSHIP_SHELL", "fish");
+
+        let shell = Shell::get_current();
+        assert!(shell.is_some());
+
+        let shell = shell.unwrap();
+        assert!(matches!(shell, Shell::Fish));
+    }
+
+    #[test]
+    fn test_get_current_is_none_on_unknown() {
+        env::set_var("STARSHIP_SHELL", "bash");
+
+        let shell = Shell::get_current();
+        assert!(shell.is_none());
+    }
+
+    #[test]
+    fn test_get_current_is_none_on_unset() {
+        env::remove_var("STARSHIP_SHELL");
+
+        let shell = Shell::get_current();
+        assert!(shell.is_none());
+    }
 }
